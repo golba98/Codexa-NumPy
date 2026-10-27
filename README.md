@@ -1,9 +1,21 @@
-# Codexa NumPy LLM
+# Codexa NumPy
 
 Codexa is a from-scratch decoder-only language-model framework. It owns the
 Tensor/autograd implementation, Transformer, attention, RMSNorm, SwiGLU,
 cross-entropy, AdamW, tokenizer, dataset pipeline, checkpointing, generation,
 and training loop.
+
+## What's implemented
+
+- **Autograd:** a `Tensor` with reverse-mode automatic differentiation (`src/tensor.py`, `src/ops/`)
+- **Model:** decoder-only Transformer with causal self-attention, RoPE, RMSNorm,
+  SwiGLU feed-forward layers and tied embeddings (`src/nn/`)
+- **Training:** cross-entropy loss, AdamW, gradient clipping and accumulation,
+  checkpoint save and resume (`src/losses/`, `src/optim/`, `src/training/`)
+- **Tokenizer:** deterministic byte-level BPE written with the standard library (`src/tokenization/`)
+- **Generation:** sampling from trained checkpoints (`src/generation/`)
+- **Backends:** NumPy on CPU, or CuPy on NVIDIA GPUs with FP16 training and FP32
+  AdamW moments (`src/backend/`)
 
 The numerical backend is selectable:
 
@@ -23,7 +35,11 @@ training tokens/second on an RTX 4080.
 
 ## Install and verify
 
-```powershell
+The commands are the same in PowerShell and a POSIX shell (use `python3` on
+Linux and macOS if `python` is not on your path). The CUDA requirements are
+only needed for the GPU backend.
+
+```shell
 python -m pip install -r requirements.txt
 python -m pip install -r requirements-cuda.txt
 python scripts/environment_report.py
@@ -37,7 +53,7 @@ Windows-specific setup is documented in [docs/WINDOWS_CUDA_SETUP.md](docs/WINDOW
 
 Run the bounded preflight first:
 
-```powershell
+```shell
 python scripts/preflight_training.py --config configs/pretrain_250m.json
 ```
 
@@ -75,5 +91,3 @@ The working tree may therefore be used with an empty `data/` and `runs/`
 directory. Run the smoke examples and tests that do not require a local
 dataset or checkpoint; restore the corresponding local artifacts before
 resuming training or evaluating a saved model.
-
-# LLM-NumPy-CuPy-
