@@ -1,91 +1,39 @@
-# Codexa NumPy
+# Codexa NumPy v2
 
-Codexa is a from-scratch decoder-only language-model framework. It owns the
-Tensor/autograd implementation, Transformer, attention, RMSNorm, SwiGLU,
-cross-entropy, AdamW, tokenizer, dataset pipeline, checkpointing, generation,
-and training loop.
+Codexa NumPy is a decoder-only language model built from scratch with a NumPy-based tensor and automatic differentiation engine. It includes Transformer layers, a byte-level BPE tokenizer, data preparation, training, checkpointing and text generation. An optional CuPy backend supports CUDA arrays; PyTorch is not a runtime dependency.
 
-## What's implemented
+## Project layout
 
-- **Autograd:** a `Tensor` with reverse-mode automatic differentiation (`src/tensor.py`, `src/ops/`)
-- **Model:** decoder-only Transformer with causal self-attention, RoPE, RMSNorm,
-  SwiGLU feed-forward layers and tied embeddings (`src/nn/`)
-- **Training:** cross-entropy loss, AdamW, gradient clipping and accumulation,
-  checkpoint save and resume (`src/losses/`, `src/optim/`, `src/training/`)
-- **Tokenizer:** deterministic byte-level BPE written with the standard library (`src/tokenization/`)
-- **Generation:** sampling from trained checkpoints (`src/generation/`)
+| Directory | Responsibility |
+| --- | --- |
+| [LLM-Architecture](LLM-Architecture/) | Tensor operations, backends, layers and losses |
+| [LLM-Data](LLM-Data/) | Dataset preparation, loading and provenance |
+| [LLM-From-Scratch](LLM-From-Scratch/) | Canonical package, tests, configuration and command-line tools |
+| [LLM-Inference](LLM-Inference/) | Text generation and sampling |
+| [LLM-Memory](LLM-Memory/) | Placeholder for future memory work |
+| [LLM-Specialist](LLM-Specialist/) | Placeholder for future specialist work |
+| [LLM-Tokenizer](LLM-Tokenizer/) | Byte-level BPE tokenizer |
+| [LLM-Training](LLM-Training/) | Training, optimizers and checkpoints |
+| [workspace-infrastructure](workspace-infrastructure/) | Workspace navigation information |
 
-The numerical backend is selectable:
+The implementation lives in `LLM-From-Scratch/src/llm_numpy`. Component directories point to this shared implementation; they are not separate packages.
 
-- NumPy on CPU
-- CuPy/CUDA on NVIDIA GPUs
+## Install and run
 
-CuPy provides CUDA array operations only. It does not provide Codexa's model,
-autograd, optimizer, tokenizer, or training loop.
+Python 3.11 or later is required. From the repository root:
 
-## Current verified model
-
-The CUDA implementation has completed numerical parity and the full lifecycle
-on the 240.9M benchmark target. The production vocabulary increases the tied
-embedding model to 253,284,096 parameters. The known-good benchmark is FP16
-with FP32 AdamW moments, batch 4, context 128, and approximately 4,001
-training tokens/second on an RTX 4080.
-
-## Install and verify
-
-The commands are the same in PowerShell and a POSIX shell (use `python3` on
-Linux and macOS if `python` is not on your path). The CUDA requirements are
-only needed for the GPU backend.
-
-```shell
-python -m pip install -r requirements.txt
-python -m pip install -r requirements-cuda.txt
-python scripts/environment_report.py
-python scripts/cuda_self_test.py
-python -m pytest -q tests
+```sh
+cd LLM-From-Scratch
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.lock
+.venv/bin/python -m pip install --no-deps -e .
+.venv/bin/python -m pytest -q tests
+.venv/bin/python -m llm_numpy.cli.environment_report
+.venv/bin/python -m llm_numpy.cli.chat_codexa --help
 ```
 
-Windows-specific setup is documented in [docs/WINDOWS_CUDA_SETUP.md](docs/WINDOWS_CUDA_SETUP.md).
+For GPU setup, see [CUDA documentation](LLM-From-Scratch/docs/CUDA_BACKEND.md) and `requirements-cuda.lock`. Checkpoints and datasets are not included; generation and training commands that use them require separately supplied assets. Review dataset provenance and run the documented preflight before training.
 
-## Before pretraining
+## Status
 
-Run the bounded preflight first:
-
-```shell
-python scripts/preflight_training.py --config configs/pretrain_250m.json
-```
-
-The checked-in local token cache is historical and currently blocked from
-production use pending source-provenance cleanup. Do not bypass that check for
-real training. `scripts/production_dry_run.py` supports at most three steps and
-labels its artifacts as a dry run.
-
-## Layout
-
-```text
-src/          model, autograd, backends, data, training, generation
-tests/        CPU and conditional CUDA regression tests
-benchmarks/   persisted-performance benchmark tools
-configs/      explicit training configurations
-scripts/      environment, preflight, checkpoint, and dry-run tools
-docs/         backend, Windows, pretraining, and evaluation documentation
-data/         local datasets, tokenizer caches, manifests, and prompts
-runs/         local experiments and benchmark evidence; not source control
-```
-
-Shakespeare is smoke/regression data only. General-language pretraining and
-later instruction SFT are separate phases.
-
-## Large local artifacts
-
-Training datasets, tokenized shards, logs, checkpoints, and generated model
-artifacts are intentionally excluded from Git. GitHub is used for the source,
-tests, configurations, documentation, and small reproducibility manifests.
-Keep large model files on local or external artifact storage and record their
-relative path, training step, configuration, and SHA-256 checksum in a small
-text or JSON manifest when an artifact needs to be referenced.
-
-The working tree may therefore be used with an empty `data/` and `runs/`
-directory. Run the smoke examples and tests that do not require a local
-dataset or checkpoint; restore the corresponding local artifacts before
-resuming training or evaluating a saved model.
+The numerical engine, tokenizer, training and generation code are implemented and covered by tests. Memory and Specialist are documentation-only placeholders. CUDA requires a compatible NVIDIA setup; validation results and historical model records do not imply that trained weights or datasets are bundled. See the [project README](LLM-From-Scratch/README.md), [model card](LLM-From-Scratch/MODEL_CARD.md), and [dataset card](LLM-From-Scratch/DATASET_CARD.md) for details.

@@ -1,0 +1,8 @@
+{
+  "asset_root": "/absolute/path/to/3-Python/32-LLM Source/artifacts/current",
+  "historical_roots": [
+    "/absolute/path/to/3-Python/32-LLM Source/artifacts/historical-local",
+    "/absolute/path/to/3-Python/32-LLM Source/artifacts/deprecated"
+  ],
+  "output_root": "outputs"
+}

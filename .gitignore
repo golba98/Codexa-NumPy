@@ -1,49 +1,59 @@
-__pycache__/
-*.py[cod]
-.pytest_cache/
-.coverage
-.venv/
-venv/
-env/
+# Internal instructions, local configuration and secrets
+AGENTS.md
+CLAUDE.md
+**/AGENTS.md
+**/CLAUDE.md
+**/.env
+**/.env.*
+**/artifacts.local.json
+**/docs/workspace/GUIDELINES.md
+/LLM-From-Scratch/docs/workspace/INFRASTRUCTURE.md
+/LLM-From-Scratch/docs/workspace/MIGRATION.md
+/LLM-From-Scratch/docs/workspace/OVERVIEW.md
+/LLM-From-Scratch/docs/workspace/VALIDATION.md
+**/.vscode/
 
-# Generated training data and large artifacts
-data/raw/
-data/processed/
-data/tokenized/
-runs/
-!runs/
-runs/*
-!runs/README.md
-logs/
-*.npz
-*.npz.sha256
-*.bin
-*.tmp.npz
-*.tmp.sha256
+# Local assets and generated files
+**/.venv/
+**/venv/
+**/__pycache__/
+**/.pytest_cache/
+**/*.py[cod]
+**/*.egg-info/
+**/outputs/
+**/checkpoints/
+**/artifacts/
+**/logs/
+**/validation/
+**/preservation/
+**/build/
+**/dist/
+**/*.safetensors
+**/*.pt
+**/*.pth
+**/*.ckpt
+**/*.bin
+**/*.npz
+!LLM-From-Scratch/reference/*.npz
+**/data/raw/
+**/data/processed/
+**/data/tokenized/
+**/runs/*
+!LLM-From-Scratch/runs/README.md
+workspace-infrastructure/validation/
+workspace-infrastructure/build
+workspace-infrastructure/preservation
 
-# Keep local datasets, checkpoints, and experiment output out of GitHub.
-# Store large model files in external artifact storage and document their
-# checksums/lineage in small text or JSON manifests instead.
-data/
-!data/
-data/*
-!data/README.md
-checkpoints/
-artifacts/
-outputs/
-*.safetensors
-*.pt
-*.pth
-*.ckpt
+# The component paths are local navigation links; public README files link to source.
+/LLM-Architecture/*
+!/LLM-Architecture/README.md
+/LLM-Data/*
+!/LLM-Data/README.md
+/LLM-Inference/*
+!/LLM-Inference/README.md
+/LLM-Tokenizer/*
+!/LLM-Tokenizer/README.md
+/LLM-Training/*
+!/LLM-Training/README.md
 
-# Local build and profiling output
-cpp/build/
-*.prof
-*.nsys-rep
-*.sqlite
-
-# Local OS/editor files
-.DS_Store
-Thumbs.db
-*.swp
-*~
+# The nested repository is staged with tools/stage-workspace.py.
