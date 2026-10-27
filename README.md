@@ -14,8 +14,6 @@ and training loop.
   checkpoint save and resume (`src/losses/`, `src/optim/`, `src/training/`)
 - **Tokenizer:** deterministic byte-level BPE written with the standard library (`src/tokenization/`)
 - **Generation:** sampling from trained checkpoints (`src/generation/`)
-- **Backends:** NumPy on CPU, or CuPy on NVIDIA GPUs with FP16 training and FP32
-  AdamW moments (`src/backend/`)
 
 The numerical backend is selectable:
 
